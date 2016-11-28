@@ -27,6 +27,49 @@ def find_paths(node, cities, path, distance):
 #def find_paths_estimate(node, cities, path, distance):
 
 
+# Nearest neighbour algorithm (greedy algorithm) done non-recursively
+# It doesn't guarantee a solution, will return True if solution is found,
+# otherwise will return False
+def shortest_path_nn(firstNode, cities, path = []):
+    # use cities by value, not by referance
+    cities = dict(cities)
+    for city in cities:
+        cities[city] = dict(cities[city])
+
+    distance = 0
+
+    # append first node
+    path.append(firstNode)
+
+    while len(path) < len(cities):
+        # choose nearest nonvisited city
+        if cities[path[-1]]:
+            nearestCity = min(cities[path[-1]], key=cities[path[-1]].get)
+        else:
+            return False
+        while nearestCity in path:
+            del cities[path[-1]][nearestCity]
+            if cities[path[-1]]:
+                nearestCity = min(cities[path[-1]], key=cities[path[-1]].get)
+            else:
+                return False
+        
+        # if such city is found update distance and path
+        distance += cities[path[-1]][nearestCity]
+        path.append(nearestCity)
+
+    if firstNode in cities[path[-1]]:
+        distance += cities[path[-1]][firstNode]
+        path.append(firstNode)
+    else:
+        return False
+
+    print("Solution found: ", path)
+    print("Distance: ", distance)
+
+    return True
+    
+
 if __name__ == '__main__':
     cities = {
         'RV': {'S': 195, 'UL': 86, 'M': 178, 'BA': 180, 'Z': 91},
@@ -41,9 +84,19 @@ if __name__ == '__main__':
         'BE': {'BA': 91, 'Z': 120},
         'Z': {'BA': 120, 'BE': 85, 'RV': 91}
     }
-
+   
+    print("Brute force algorithm:")
     print("Start: River City")
     find_paths('RV', cities, [], 0)
     routes.sort()
     if len(routes) != 0:
         print("Shortest route: %s" % routes[0])
+
+    print("\nNearest neighbour algorithm:")
+    print("Start: N")
+    if not shortest_path_nn('N', cities):
+        print("Solution not found")
+    print("Start: RV")
+    if not shortest_path_nn('RV', cities):
+        print("Solution not found")
+    
