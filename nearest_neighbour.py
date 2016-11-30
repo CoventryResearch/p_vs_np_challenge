@@ -43,6 +43,7 @@ def shortest_path_nn(firstNode, cities, path = []):
     return True
     
 if __name__ == '__main__':
+    #load cities
     with open('cities.json') as json_data:
         cities = json.load(json_data)
 

@@ -2,6 +2,7 @@ import json
 import operator
 
 solved = False
+solution = []
 
 # Tweaked nearest neighbour algorithm done recursively, 
 # so that it always produces a solution if one exists
@@ -18,11 +19,13 @@ def shortest_path_nn_rec(node, cities, citiesSorted, path, distance):
     # find new solutions
     if (len(cities) == len(path)) and (path[0] in cities[path[-1]]):
         global solved
+        global solution
         path.append(path[0])
         distance += cities[path[-2]][path[0]]
         print("Solution:", path)
         print("Distance:", distance)
         solved = True
+        solution = path
         return
     
     # Go to closest unvisited city if solution not found
@@ -30,14 +33,20 @@ def shortest_path_nn_rec(node, cities, citiesSorted, path, distance):
         if (city not in path) and (not solved):
             shortest_path_nn_rec(city, dict(cities), dict(citiesSorted), list(path), distance)
 
+# Returns a dict of sorted lists (by distance) containing tuples (city, distance)
+def cities_sorted(cities):
+    citiesSorted = {}
+    for city in cities:
+        citiesSorted[city] = sorted(cities[city].items(), key=operator.itemgetter(1))
+    return citiesSorted
+
 if __name__ == '__main__':
+    #load cities
     with open('cities.json') as json_data:
         cities = json.load(json_data)
 
     # Sort distances from each city
-    citiesSorted = {}
-    for city in cities:
-        citiesSorted[city] = sorted(cities[city].items(), key=operator.itemgetter(1))
+    citiesSorted = cities_sorted(cities)
 
     print("Recursive nearest neighbour:")
     for city in cities:
