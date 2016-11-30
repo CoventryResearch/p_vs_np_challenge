@@ -40,6 +40,14 @@ def cities_sorted(cities):
         citiesSorted[city] = sorted(cities[city].items(), key=operator.itemgetter(1))
     return citiesSorted
 
+def unsolved():
+    global solved
+    solved = False
+
+def get_nn_solution():
+    global solution
+    return solution
+
 if __name__ == '__main__':
     #load cities
     with open('cities.json') as json_data:
